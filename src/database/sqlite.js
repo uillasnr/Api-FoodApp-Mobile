@@ -11,10 +11,12 @@ function execute(command, params, method = "all") {
   });
 }
 
-const db = new SQLite.Database(".src/database/banco.db", SQLite.OPEN_READWRITE, (err) => {
-    if (err) {
-        return console.log(" ❌ Erro ao conectar ao banco ❌: " + err.message);
-    }
+const db = new SQLite.Database("./src/database/banco.db", SQLite.OPEN_READWRITE, (err) => {
+  if (err) {
+      return console.log("❌ Erro ao conectar ao banco ❌: " + err.message);
+  } else {
+      console.log("✅ Conectado ao banco de dados com sucesso!");
+  }
 });
 
 
