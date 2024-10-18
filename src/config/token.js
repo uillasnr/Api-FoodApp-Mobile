@@ -16,14 +16,14 @@ function ValidateJwt(req, res, next) {
     return res.status(401).json({ message: "Token não informado" });
   }
 
-  const [aux, token] = authToken.split("");
+  const token = authToken.split(" ")[1]; // Corrige o split para separar "Bearer <token>"
 
   jwt.verify(token, secretToken, (err, decoded) => {
-    if (err)
-         return res.status(401).json({ message: "Token inválido" });
+    if (err) {
+      return res.status(401).json({ message: "Token inválido" });
+    }
 
     req.id_user = decoded.id_user;
-
     next();
   });
 }
