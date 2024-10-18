@@ -1,6 +1,9 @@
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
-const secretToken = "uillas";
+dotenv.config();
+
+const secretToken = process.env.SECRET_TOKEN; 
 
 function CreateJWT(id_user) {
   const token = jwt.sign({ id_user }, secretToken, {
@@ -16,7 +19,7 @@ function ValidateJwt(req, res, next) {
     return res.status(401).json({ message: "Token não informado" });
   }
 
-  const token = authToken.split(" ")[1]; // Corrige o split para separar "Bearer <token>"
+  const token = authToken.split(" ")[1]; 
 
   jwt.verify(token, secretToken, (err, decoded) => {
     if (err) {
