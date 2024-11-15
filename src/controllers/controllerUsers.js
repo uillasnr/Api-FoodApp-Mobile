@@ -16,6 +16,11 @@ async function CreateUser(req, res) {
   } = req.body;
 
   try {
+     // Verificar se o e-mail já existe no banco de dados
+     const existingUser = await serviceUsers.FindByEmail(email);
+     if (existingUser) {
+       return res.status(400).json({ message: "User with this email already exists" });
+     }
     // Criar o novo usuário
     const newUser = await serviceUsers.CreateUser(
       name,
@@ -33,10 +38,12 @@ async function CreateUser(req, res) {
     // Gerar o token JWT com o ID do usuário criado
     const jwtToken = token.CreateJWT(newUser.id);
 
+    // Remover a senha do usuário antes de retorná-lo
+    const { password: _, ...userWithoutPassword } = newUser;
+
     return res.status(201).json({
       message: "User created successfully",
-      user: newUser,
-      user: isAdmin,
+      user: userWithoutPassword, // Retorna o usuário sem a senha
       token: jwtToken, // Enviando o token gerado
     });
   } catch (error) {

@@ -18,8 +18,9 @@ async function CreateUser(
     returning *;
   `;
 
+
   // Executa o comando de inserção
-  await execute(sql, [
+  const result = await execute(sql, [
     name,
     email,
     password,
@@ -32,16 +33,18 @@ async function CreateUser(
     isAdmin
   ]);
 
-  // retornar os dados completos
-  const findUserSql = `
-    SELECT USER_ID as id, NAME, EMAIL, ADDRESS, ADDITIONAL, NEIGHBORHOOD, CITY, STATE, ZIP_CODE, IS_ADMIN
-    FROM USER
-    WHERE EMAIL = ?
-  `;
-  const newUser = await execute(findUserSql, [email]);
+  return result[0]; // Return all the fields of the new user
 
-  return newUser[0]; // Retorna o primeiro (e único) resultado
 }
+
+async function FindByEmail(email) {
+  const sql = `SELECT * FROM USER WHERE EMAIL = ?`; 
+
+  const user = await execute(sql, [email]);
+  
+  return user.length > 0 ? user[0] : null; 
+}
+
 
 async function Login(email) {
   const sql = `
@@ -74,4 +77,4 @@ async function favorites(id) {
   return favorites;
 }
 
-export default { CreateUser, Login, Perfil, favorites };
+export default { CreateUser, Login, Perfil, favorites, FindByEmail };

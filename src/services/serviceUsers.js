@@ -43,6 +43,12 @@ async function verifyPassword(plainPassword, hashedPassword) {
   return await bcrypt.compare(plainPassword, hashedPassword);
 }
 
+async function FindByEmail(email) {
+  const user = await repositoryUsers.FindByEmail(email);
+  return user; // Retorna o usuário se encontrado, ou null se não existir.
+}
+
+
 async function Perfil(id) {
   const userProfile = await repositoryUsers.Perfil(id);
 
@@ -58,4 +64,4 @@ async function favorites(id) {
   return favorites;
 }
 
-export default { CreateUser, Login, verifyPassword, Perfil, favorites };
+export default { CreateUser, Login, verifyPassword, Perfil, favorites, FindByEmail };
