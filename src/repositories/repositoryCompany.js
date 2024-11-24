@@ -2,9 +2,9 @@ import { execute } from "../database/sqlite.js";
 
 async function getCompanyHighlights(id) {
   const sql = `select case when u.id_favorite is null then 'N' else 'S' end as favorite, e.*
- from  highlights d
- join company e on (e.COMPANY_ID = d.COMPANY_ID)
- left join user_favorite u on (u.id_company = e.company_id and u.id_user = ?)
+  from  highlights d
+  JOIN company e ON (e.id_company = d.id_company)
+  LEFT JOIN user_favorite u ON u.id_company = e.id_company AND u.id_user = ?
   order by 'd.order'`;
   const companies = await execute(sql, [id]);
   return companies;
@@ -13,8 +13,8 @@ async function getCompanyHighlights(id) {
 async function CompanyList(id, search) {
   let sql = `select case when u.id_favorite is null then 'N' else 'S' end as favorite, e.*
              from  company d
-             join company e on (e.COMPANY_ID = d.COMPANY_ID)
-             left join user_favorite u on (u.id_company = e.company_id and u.id_user = ?)
+             JOIN company e ON (e.id_company = d.id_company)
+             LEFT JOIN user_favorite u ON (u.id_company = e.id_company AND u.id_user = ?)
              `;
 
   const params = [id];
@@ -63,8 +63,8 @@ async function Menu(id_user, id_company) {
       CASE WHEN u.id_favorite IS NULL THEN 'N' ELSE 'S' END AS favorite,
       e.*
     FROM company e
-    LEFT JOIN user_favorite u ON (u.id_company = e.company_id AND u.id_user = ?)
-    WHERE e.company_id = ?  -- Filtra pela empresa
+    LEFT JOIN user_favorite u ON (u.id_company = e.id_company AND u.id_user = ?)
+    WHERE e.id_company = ?  -- Filtra pela empresa
   `;
 
   const company = await execute(sql, [id_user, id_company]);
@@ -74,7 +74,7 @@ async function Menu(id_user, id_company) {
     p.*, c.category
   FROM PRODUCT p
   JOIN PRODUCT_CATEGORY c ON c.product_category_id = p.product_category_id
-  WHERE p.company_id = ? 
+  WHERE p.id_company = ? 
   ORDER BY c.[order], p.name
 `;
 
@@ -89,7 +89,7 @@ async function Menu(id_user, id_company) {
 
 async function listProduct(id_company,id_product) {
   const sql = 
-  `SELECT * FROM PRODUCT WHERE company_id = ? and product_id = ?`;
+  `SELECT * FROM PRODUCT WHERE id_company = ? and product_id = ?`;
   const product = await execute(sql, [id_company,id_product]);
   return product[0];
 }

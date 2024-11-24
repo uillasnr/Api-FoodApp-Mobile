@@ -71,7 +71,7 @@ async function favorites(id) {
   const sql = `
   select f.*, e.icon, e.name, e.address, e.NEIGHBORHOOD, e.CITY, e.ZIP_CODE, e.ADDITIONAL 
   from user_favorite f 
-  join company e on (e.COMPANY_ID = f.ID_COMPANY)
+  join company e on (e.id_company = f.ID_COMPANY)
   where f.ID_USER = ?`;
   const favorites = await execute(sql, [id]);
   return favorites;
