@@ -15,7 +15,9 @@ async function CompanyList(req, res) {
   try {
     const id = req.id_user;
     const search = req.query.search;
-    const companies = await serviceCompany.CompanyList(id, search);
+    const category_id = req.query.category_id;
+    const banner_id = req.query.banner_id;
+    const companies = await serviceCompany.CompanyList(id, search, category_id, banner_id);
 
     res.status(200).json(companies);
   } catch (error) {

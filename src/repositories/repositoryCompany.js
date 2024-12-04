@@ -10,20 +10,34 @@ async function getCompanyHighlights(id) {
   return companies;
 }
 
-async function CompanyList(id, search) {
+async function CompanyList(id, search, category_id, banner_id) {
   let sql = `select case when u.id_favorite is null then 'N' else 'S' end as favorite, e.*
              from  company d
              JOIN company e ON (e.id_company = d.id_company)
              LEFT JOIN user_favorite u ON (u.id_company = e.id_company AND u.id_user = ?)
+             LEFT JOIN banner b on (b.id_company = e.id_company)
+             where e.id_company > 0
              `;
 
   const params = [id];
 
   // Adiciona a condição de busca se houver um termo de pesquisa
   if (search) {
-    sql += ` where e.name like ?`; // Filtra pelo nome da empresa
-    params.push(`%${search}%`); // Usa o termo de busca com wildcards
+    sql += ` AND e.name LIKE ?`; // Corrigido para adicionar "AND"
+    params.push(`%${search}%`);
   }
+
+  // Adiciona a condição de filtro pela categoria se houver
+  if (category_id) {
+    sql += ` AND e.category_id = ?`; // Comparação direta para category_id
+    params.push(category_id); // Não precisa de wildcards
+  }
+
+  if (banner_id) {
+    sql += ` AND b.banner_id = ?`; // Comparação direta para category_id
+    params.push(banner_id); // Não precisa de wildcards
+  }
+
 
   sql += ` order by 'd.order'`;
 
@@ -74,9 +88,10 @@ async function Menu(id_user, id_company) {
     p.*, c.category
   FROM PRODUCT p
   JOIN PRODUCT_CATEGORY c ON c.product_category_id = p.product_category_id
-  WHERE p.id_company = ? 
+  WHERE p.id_company = ? -- Substituir pelo nome correto
   ORDER BY c.[order], p.name
 `;
+
 
   const itens = await execute(itemSql, [id_company]);
 

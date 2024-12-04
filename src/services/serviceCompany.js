@@ -5,8 +5,8 @@ async function getCompanyHighlights(id) {
   return companies;
 }
 
-async function CompanyList(id, search) {
-  const companies = await repositoryCompany.CompanyList(id, search);
+async function CompanyList(id, search, category_id, banner_id) {
+  const companies = await repositoryCompany.CompanyList(id, search, category_id, banner_id);
   return companies;
 }
 
