@@ -2,9 +2,10 @@ import { execute } from "../database/sqlite.js";
 
  async function getOrders() {
   const sql = `
-    SELECT p.*, e.NAME, e.ICON
+    SELECT p.*, e.NAME, e.ICON, s.description as description_status
     FROM [ORDER] p
-    JOIN company e ON (e.COMPANY_ID = p.COMPANY_ID)
+    JOIN company e ON (e.id_company = p.id_company)
+    join ORDER_STATUS s on (s.status = p.status)
     ORDER BY "order", order_id DESC
   `;
   const orders = await execute(sql, []);
@@ -16,7 +17,7 @@ async function getOrdersId(id) {
   const sql = `
     SELECT p.*, e.NAME, e.ICON
     FROM [ORDER] p
-    JOIN company e ON (e.COMPANY_ID = p.COMPANY_ID)
+    JOIN company e ON (e.id_company = p.id_company)
     WHERE p.ORDER_ID = ?
     ORDER BY "order", order_id DESC
   `;
